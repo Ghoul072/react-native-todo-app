@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -24,14 +24,25 @@ export const TodoForm: React.FC<TodoFormProps> = ({
   onSubmit,
   initialTodo,
 }) => {
-  const [title, setTitle] = useState(initialTodo?.title || "");
-  const [description, setDescription] = useState(
-    initialTodo?.description || ""
-  );
-  const [dueDate, setDueDate] = useState(
-    initialTodo ? new Date(initialTodo.dueDate) : new Date()
-  );
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [dueDate, setDueDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+
+  // Reset form when modal becomes visible
+  useEffect(() => {
+    if (visible) {
+      if (initialTodo) {
+        setTitle(initialTodo.title);
+        setDescription(initialTodo.description);
+        setDueDate(new Date(initialTodo.dueDate));
+      } else {
+        setTitle("");
+        setDescription("");
+        setDueDate(new Date());
+      }
+    }
+  }, [visible, initialTodo]);
 
   const handleSubmit = () => {
     onSubmit({
@@ -39,9 +50,6 @@ export const TodoForm: React.FC<TodoFormProps> = ({
       description,
       dueDate,
     });
-    setTitle("");
-    setDescription("");
-    setDueDate(new Date());
     onDismiss();
   };
 
