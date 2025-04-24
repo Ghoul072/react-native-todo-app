@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { Provider as PaperProvider, FAB } from "react-native-paper";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { TodoList } from "./src/components/TodoList";
 import { TodoForm } from "./src/components/TodoForm";
 import { Todo, useTodoStore } from "./src/store/todoStore";
@@ -25,28 +26,30 @@ export default function App() {
   };
 
   return (
-    <PaperProvider>
-      <SafeAreaView style={styles.container}>
-        <TodoList onEdit={handleEditTodo} />
-        <FAB
-          style={styles.fab}
-          icon="plus"
-          onPress={() => {
-            setEditingTodo(undefined);
-            setIsFormVisible(true);
-          }}
-        />
-        <TodoForm
-          visible={isFormVisible}
-          onDismiss={() => {
-            setIsFormVisible(false);
-            setEditingTodo(undefined);
-          }}
-          onSubmit={handleAddTodo}
-          initialTodo={editingTodo}
-        />
-      </SafeAreaView>
-    </PaperProvider>
+    <SafeAreaProvider>
+      <PaperProvider>
+        <SafeAreaView style={styles.container}>
+          <TodoList onEdit={handleEditTodo} />
+          <FAB
+            style={styles.fab}
+            icon="plus"
+            onPress={() => {
+              setEditingTodo(undefined);
+              setIsFormVisible(true);
+            }}
+          />
+          <TodoForm
+            visible={isFormVisible}
+            onDismiss={() => {
+              setIsFormVisible(false);
+              setEditingTodo(undefined);
+            }}
+            onSubmit={handleAddTodo}
+            initialTodo={editingTodo}
+          />
+        </SafeAreaView>
+      </PaperProvider>
+    </SafeAreaProvider>
   );
 }
 
