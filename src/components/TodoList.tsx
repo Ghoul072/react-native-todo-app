@@ -17,25 +17,29 @@ export const TodoList: React.FC<TodoListProps> = ({ onEdit }) => {
   const { todos, removeTodo, toggleTodo } = useTodoStore();
 
   const renderItem = ({ item }: { item: Todo }) => (
-    <View style={styles.card}>
-      <View style={styles.cardContent}>
-        <Text style={[styles.title, item.completed && styles.completed]}>
-          {item.title}
-        </Text>
-        <Text style={styles.description}>{item.description}</Text>
-        <Text style={styles.date}>
-          Due: {format(new Date(item.dueDate), "MMM dd, yyyy")}
-        </Text>
-      </View>
-      <View style={styles.cardActions}>
+    <View style={[styles.card, item.completed && styles.completedCard]}>
+      <View style={styles.cardHeader}>
         <TouchableOpacity
-          style={[styles.button, styles.toggleButton]}
+          style={[styles.checkbox, item.completed && styles.checked]}
           onPress={() => toggleTodo(item.id)}
         >
-          <Text style={styles.buttonText}>
-            {item.completed ? "Mark Incomplete" : "Mark Complete"}
-          </Text>
+          {item.completed && <Text style={styles.checkmark}>✓</Text>}
         </TouchableOpacity>
+        <View style={styles.titleContainer}>
+          <Text style={[styles.title, item.completed && styles.completed]}>
+            {item.title}
+          </Text>
+          <Text style={styles.date}>
+            Due: {format(new Date(item.dueDate), "MMM dd, yyyy")}
+          </Text>
+        </View>
+      </View>
+      {item.description && (
+        <Text style={[styles.description, item.completed && styles.completed]}>
+          {item.description}
+        </Text>
+      )}
+      <View style={styles.cardActions}>
         <TouchableOpacity
           style={[styles.button, styles.editButton]}
           onPress={() => onEdit(item)}
@@ -67,36 +71,69 @@ export const TodoList: React.FC<TodoListProps> = ({ onEdit }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f8f9fa",
   },
   list: {
     padding: 16,
   },
   card: {
     backgroundColor: "white",
-    borderRadius: 8,
+    borderRadius: 12,
     marginBottom: 16,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
+    overflow: "hidden",
   },
-  cardContent: {
+  completedCard: {
+    opacity: 0.8,
+    backgroundColor: "#f8f9fa",
+  },
+  cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#4CAF50",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  checked: {
+    backgroundColor: "#4CAF50",
+  },
+  checkmark: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  titleContainer: {
+    flex: 1,
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 8,
+    color: "#333",
   },
   description: {
     fontSize: 14,
     color: "#666",
-    marginBottom: 8,
+    padding: 16,
+    paddingTop: 8,
   },
   date: {
     fontSize: 12,
     color: "#888",
+    marginTop: 4,
   },
   completed: {
     textDecorationLine: "line-through",
@@ -104,20 +141,17 @@ const styles = StyleSheet.create({
   },
   cardActions: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 8,
+    justifyContent: "flex-end",
+    padding: 12,
+    backgroundColor: "#f8f9fa",
     borderTopWidth: 1,
     borderTopColor: "#eee",
   },
   button: {
-    padding: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 4,
-    flex: 1,
-    marginHorizontal: 4,
-    alignItems: "center",
-  },
-  toggleButton: {
-    backgroundColor: "#4CAF50",
+    marginLeft: 8,
   },
   editButton: {
     backgroundColor: "#2196F3",
@@ -128,5 +162,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "bold",
+    fontSize: 14,
   },
 });

@@ -54,12 +54,16 @@ export const TodoForm: React.FC<TodoFormProps> = ({
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>
+            {initialTodo ? "Edit Todo" : "Add New Todo"}
+          </Text>
           <Text style={styles.label}>Title</Text>
           <TextInput
             value={title}
             onChangeText={setTitle}
             style={styles.input}
             placeholder="Enter todo title"
+            placeholderTextColor="#999"
           />
           <Text style={styles.label}>Description</Text>
           <TextInput
@@ -68,13 +72,16 @@ export const TodoForm: React.FC<TodoFormProps> = ({
             multiline
             style={[styles.input, styles.textArea]}
             placeholder="Enter todo description"
+            placeholderTextColor="#999"
           />
           <Text style={styles.label}>Due Date</Text>
           <TouchableOpacity
             style={styles.dateButton}
             onPress={() => setShowDatePicker(true)}
           >
-            <Text>{dueDate.toLocaleDateString()}</Text>
+            <Text style={styles.dateButtonText}>
+              {dueDate.toLocaleDateString()}
+            </Text>
           </TouchableOpacity>
           {showDatePicker && (
             <DateTimePicker
@@ -97,7 +104,11 @@ export const TodoForm: React.FC<TodoFormProps> = ({
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.button, styles.submitButton]}
+              style={[
+                styles.button,
+                styles.submitButton,
+                !title.trim() && styles.disabledButton,
+              ]}
               onPress={handleSubmit}
               disabled={!title.trim()}
             >
@@ -122,23 +133,37 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "white",
     margin: 20,
-    padding: 20,
-    borderRadius: 8,
+    padding: 24,
+    borderRadius: 12,
     width: "90%",
     maxWidth: 400,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 24,
+    textAlign: "center",
   },
   label: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "600",
+    color: "#333",
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
-    borderRadius: 4,
-    padding: 8,
+    borderRadius: 8,
+    padding: 12,
     marginBottom: 16,
     fontSize: 16,
+    backgroundColor: "#f8f9fa",
   },
   textArea: {
     height: 100,
@@ -147,28 +172,35 @@ const styles = StyleSheet.create({
   dateButton: {
     borderWidth: 1,
     borderColor: "#ddd",
-    borderRadius: 4,
+    borderRadius: 8,
     padding: 12,
-    marginBottom: 16,
-    alignItems: "center",
+    marginBottom: 24,
+    backgroundColor: "#f8f9fa",
+  },
+  dateButtonText: {
+    fontSize: 16,
+    color: "#333",
+    textAlign: "center",
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 16,
+    gap: 12,
   },
   button: {
     flex: 1,
     padding: 12,
-    borderRadius: 4,
-    marginHorizontal: 4,
+    borderRadius: 8,
     alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: "#f44336",
+    backgroundColor: "#F44336",
   },
   submitButton: {
     backgroundColor: "#4CAF50",
+  },
+  disabledButton: {
+    backgroundColor: "#ccc",
   },
   buttonText: {
     color: "white",
