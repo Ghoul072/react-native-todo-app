@@ -1,6 +1,13 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { TextInput, Button, Portal, Modal, useTheme } from "react-native-paper";
+import {
+  View,
+  StyleSheet,
+  Modal as RNModal,
+  Platform,
+  TextInput,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Todo } from "../store/todoStore";
 
@@ -25,7 +32,6 @@ export const TodoForm: React.FC<TodoFormProps> = ({
     initialTodo ? new Date(initialTodo.dueDate) : new Date()
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const theme = useTheme();
 
   const handleSubmit = () => {
     onSubmit({
@@ -40,38 +46,41 @@ export const TodoForm: React.FC<TodoFormProps> = ({
   };
 
   return (
-    <Portal>
-      <Modal
-        visible={visible}
-        onDismiss={onDismiss}
-        contentContainerStyle={styles.modal}
-      >
-        <View style={styles.container}>
+    <RNModal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={onDismiss}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <Text style={styles.label}>Title</Text>
           <TextInput
-            label="Title"
             value={title}
             onChangeText={setTitle}
             style={styles.input}
+            placeholder="Enter todo title"
           />
+          <Text style={styles.label}>Description</Text>
           <TextInput
-            label="Description"
             value={description}
             onChangeText={setDescription}
             multiline
-            style={styles.input}
+            style={[styles.input, styles.textArea]}
+            placeholder="Enter todo description"
           />
-          <Button
-            mode="outlined"
-            onPress={() => setShowDatePicker(true)}
+          <Text style={styles.label}>Due Date</Text>
+          <TouchableOpacity
             style={styles.dateButton}
+            onPress={() => setShowDatePicker(true)}
           >
-            {dueDate.toLocaleDateString()}
-          </Button>
+            <Text>{dueDate.toLocaleDateString()}</Text>
+          </TouchableOpacity>
           {showDatePicker && (
             <DateTimePicker
               value={dueDate}
               mode="date"
-              display="default"
+              display={Platform.OS === "ios" ? "spinner" : "default"}
               onChange={(event, selectedDate) => {
                 setShowDatePicker(false);
                 if (selectedDate) {
@@ -81,39 +90,67 @@ export const TodoForm: React.FC<TodoFormProps> = ({
             />
           )}
           <View style={styles.buttonContainer}>
-            <Button mode="outlined" onPress={onDismiss} style={styles.button}>
-              Cancel
-            </Button>
-            <Button
-              mode="contained"
+            <TouchableOpacity
+              style={[styles.button, styles.cancelButton]}
+              onPress={onDismiss}
+            >
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.submitButton]}
               onPress={handleSubmit}
-              style={styles.button}
               disabled={!title.trim()}
             >
-              {initialTodo ? "Update" : "Add"} Todo
-            </Button>
+              <Text style={styles.buttonText}>
+                {initialTodo ? "Update" : "Add"} Todo
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </Modal>
-    </Portal>
+      </View>
+    </RNModal>
   );
 };
 
 const styles = StyleSheet.create({
-  modal: {
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
     backgroundColor: "white",
     margin: 20,
     padding: 20,
     borderRadius: 8,
+    width: "90%",
+    maxWidth: 400,
   },
-  container: {
-    gap: 16,
-  },
-  input: {
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
     marginBottom: 8,
   },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 4,
+    padding: 8,
+    marginBottom: 16,
+    fontSize: 16,
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: "top",
+  },
   dateButton: {
-    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 4,
+    padding: 12,
+    marginBottom: 16,
+    alignItems: "center",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -122,6 +159,20 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
+    padding: 12,
+    borderRadius: 4,
     marginHorizontal: 4,
+    alignItems: "center",
+  },
+  cancelButton: {
+    backgroundColor: "#f44336",
+  },
+  submitButton: {
+    backgroundColor: "#4CAF50",
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });

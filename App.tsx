@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
-import { Provider as PaperProvider, FAB } from "react-native-paper";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  View,
+  StyleSheet,
+  Platform,
+  StatusBar,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import { TodoList } from "./src/components/TodoList";
 import { TodoForm } from "./src/components/TodoForm";
 import { Todo, useTodoStore } from "./src/store/todoStore";
@@ -26,30 +31,28 @@ export default function App() {
   };
 
   return (
-    <SafeAreaProvider>
-      <PaperProvider>
-        <SafeAreaView style={styles.container}>
-          <TodoList onEdit={handleEditTodo} />
-          <FAB
-            style={styles.fab}
-            icon="plus"
-            onPress={() => {
-              setEditingTodo(undefined);
-              setIsFormVisible(true);
-            }}
-          />
-          <TodoForm
-            visible={isFormVisible}
-            onDismiss={() => {
-              setIsFormVisible(false);
-              setEditingTodo(undefined);
-            }}
-            onSubmit={handleAddTodo}
-            initialTodo={editingTodo}
-          />
-        </SafeAreaView>
-      </PaperProvider>
-    </SafeAreaProvider>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <TodoList onEdit={handleEditTodo} />
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => {
+          setEditingTodo(undefined);
+          setIsFormVisible(true);
+        }}
+      >
+        <Text style={styles.fabText}>+</Text>
+      </TouchableOpacity>
+      <TodoForm
+        visible={isFormVisible}
+        onDismiss={() => {
+          setIsFormVisible(false);
+          setEditingTodo(undefined);
+        }}
+        onSubmit={handleAddTodo}
+        initialTodo={editingTodo}
+      />
+    </View>
   );
 }
 
@@ -57,11 +60,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   fab: {
     position: "absolute",
-    margin: 16,
-    right: 0,
-    bottom: 0,
+    right: 16,
+    bottom: 16,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#007AFF",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  fabText: {
+    color: "white",
+    fontSize: 24,
+    fontWeight: "bold",
   },
 });
