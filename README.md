@@ -16,7 +16,7 @@ A React Native todo application built with Expo, TypeScript, and Zustand for sta
 
 - Node.js (v14 or later)
 - Bun package manager
-- Expo Go app installed on your mobile device
+- Expo Go app installed on your mobile device / Android Studio
 
 ## Installation
 
@@ -44,7 +44,6 @@ The app is built with:
 - TypeScript
 - Expo
 - Zustand (state management)
-- React Native Paper (UI components)
 - AsyncStorage (persistent storage)
 - React Native Reanimated (animations)
 
